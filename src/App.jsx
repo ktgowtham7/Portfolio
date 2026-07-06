@@ -127,7 +127,7 @@ const ParallaxImage = ({ src, speed = 1 }) => {
   );
 }
 
-// 5. Terminal Component
+// 5. Terminal Component (Light Theme Variant)
 const TerminalBlock = () => {
   const commands = [
     { cmd: "whoami", out: "Senior Software Engineer specialized in highly scalable Node/React architectures." },
@@ -215,9 +215,9 @@ function App() {
   ];
 
   const features = [
-    { title: "Real-time WebSocket Grid", icon: "⚡", desc: "Engineered a custom React data grid that handles 10,000+ real-time row updates per second without dropping frames using Canvas API." },
-    { title: "Custom Auth Service", icon: "🔒", desc: "Built an OAuth2 & JWT based microservice with Redis caching, handling secure sessions and rate-limiting for 1M+ users." },
-    { title: "Automated CI/CD", icon: "🚀", desc: "Architected GitHub Actions pipelines with Docker & AWS ECS, cutting deployment time from 20 minutes to under 3 minutes." }
+    { num: "01", title: "Real-time WebSocket Grid", desc: "Engineered a custom React data grid that handles 10,000+ real-time row updates per second without dropping frames using Canvas API." },
+    { num: "02", title: "Custom Auth Service", desc: "Built an OAuth2 & JWT based microservice with Redis caching, handling secure sessions and rate-limiting for 1M+ users." },
+    { num: "03", title: "Automated CI/CD", desc: "Architected GitHub Actions pipelines with Docker & AWS ECS, cutting deployment time from 20 minutes to under 3 minutes." }
   ];
 
   const timeline = [
@@ -357,7 +357,7 @@ function App() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.15 }}
               >
-                <div className="feature-icon">{feat.icon}</div>
+                <div className="feature-num">{feat.num}</div>
                 <h4>{feat.title}</h4>
                 <p>{feat.desc}</p>
               </motion.div>
