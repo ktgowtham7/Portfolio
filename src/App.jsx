@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
+import { motion, useSpring, useMotionValue } from 'framer-motion';
 import Lenis from 'lenis';
 import './index.css';
 
@@ -53,7 +53,7 @@ const CustomCursor = () => {
 };
 
 // 2. Kinetic Text Component
-const MaskText = ({ phrases, delay = 0 }) => {
+const MaskText = ({ phrases, delay = 0, className = "" }) => {
   const animation = {
     initial: { y: "100%" },
     enter: i => ({ y: "0", transition: { duration: 1, ease: [0.33, 1, 0.68, 1], delay: delay + (i * 0.1) } })
@@ -63,8 +63,8 @@ const MaskText = ({ phrases, delay = 0 }) => {
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       {phrases.map((phrase, index) => {
         return (
-          <div key={index} className="mask-wrap">
-            <motion.div custom={index} variants={animation} initial="initial" whileInView="enter" viewport={{ once: true }}>
+          <div key={index} style={{ overflow: 'hidden', paddingBottom: '0.1em' }}>
+            <motion.div custom={index} variants={animation} initial="initial" whileInView="enter" viewport={{ once: true }} className={className}>
               {phrase}
             </motion.div>
           </div>
@@ -101,76 +101,10 @@ const MagneticButton = ({ children, href }) => {
       transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
       className="magnetic-btn interactive"
     >
-      <span className="magnetic-btn-text">{children}</span>
+      <span>{children}</span>
     </motion.a>
   )
 }
-
-// 4. Parallax Image Component
-const ParallaxImage = ({ src, speed = 1 }) => {
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"]
-  });
-  
-  const y = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
-
-  return (
-    <div ref={ref} className="project-img-wrapper interactive">
-      <motion.img 
-        src={src} 
-        style={{ y }} 
-        className="project-img" 
-      />
-    </div>
-  );
-}
-
-// 5. Terminal Component (Light Theme Variant)
-const TerminalBlock = () => {
-  const commands = [
-    { cmd: "whoami", out: "Senior Software Engineer specialized in highly scalable Node/React architectures." },
-    { cmd: "ls ./skills", out: "react  next.js  typescript  node.js  express  mongodb  postgresql  redis  docker  aws" },
-    { cmd: "cat ./mission.txt", out: "Build resilient, performant, and beautiful software that scales to millions." }
-  ];
-
-  return (
-    <div className="terminal-window interactive">
-      <div className="terminal-header">
-        <div className="terminal-dot r"></div>
-        <div className="terminal-dot y"></div>
-        <div className="terminal-dot g"></div>
-      </div>
-      <div className="terminal-body">
-        {commands.map((c, i) => (
-          <motion.div 
-            key={i} 
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.4, duration: 0.5 }}
-          >
-            <div><span className="term-prompt">~</span><span className="term-cmd">{c.cmd}</span></div>
-            <div className="term-output">{c.out}</div>
-          </motion.div>
-        ))}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: commands.length * 0.4 }}
-        >
-          <span className="term-prompt">~</span><motion.span 
-            animate={{ opacity: [0, 1, 0] }} 
-            transition={{ repeat: Infinity, duration: 0.8 }}
-            className="term-cmd"
-          >_</motion.span>
-        </motion.div>
-      </div>
-    </div>
-  );
-};
 
 // Main App
 function App() {
@@ -191,46 +125,65 @@ function App() {
     return () => lenis.destroy();
   }, []);
 
+  const technicalSkills = {
+    Languages: "JavaScript (ES6+), TypeScript (familiar), SQL, HTML5, CSS3",
+    Frontend: "React.js, Next.js, Tailwind CSS, Bootstrap, Responsive Web Design",
+    Backend: "Node.js, Express.js, REST API Design, Prisma ORM, JWT Authentication",
+    Databases: "PostgreSQL, MySQL, MongoDB",
+    "Tools & Practices": "Git, GitHub, Postman, VS Code, Vercel, Render, Agile/Scrum, Code Review",
+    "Also worked with": "WordPress, Shopify, WooCommerce (freelance/client sites)"
+  };
+
+  const experience = [
+    { 
+      role: "Web Developer", 
+      company: "RDS Digital, Bengaluru", 
+      year: "Nov 2025 - Present", 
+      bullets: [
+        "Architected and built an enterprise agency-management dashboard (React.js, Node.js, Express.js, PostgreSQL, Prisma ORM) — now spanning 38 relational data models across 22 backend route modules, exposing 100+ REST API endpoints, used daily by the full agency team.",
+        "Implemented Role-Based Access Control (RBAC) for 4 user types (Admin, Account Manager, Team Member, Management), eliminating unauthorized data access across every module and reducing manual permission-handling overhead.",
+        "Built core business modules — Statement of Work (SOW) tracking, task management, communication logs, meetings, client health scoring, and campaign performance reporting — consolidating workflows previously spread across spreadsheets and email.",
+        "Designed a normalized PostgreSQL schema supporting granular tracking entities (asset versioning, annotations, onboarding checklists), keeping the data model scalable as new modules were added without requiring schema rewrites.",
+        "Built a reusable React component library and responsive UI layer, cutting development time for new dashboard modules by reusing shared components instead of building from scratch.",
+        "Owned project delivery end-to-end — gathering requirements directly from stakeholders, architecting solutions, and deploying to production independently.",
+        "Delivered and maintained WordPress and Shopify sites for clients, including performance optimization, security remediation, and migrations."
+      ] 
+    },
+    { 
+      role: "WordPress Developer Intern", 
+      company: "Amika Softwares, Remote", 
+      year: "May 2025 - Jul 2025", 
+      bullets: [
+        "Customized dynamic WordPress sites using Elementor, custom CSS, and JavaScript, improving responsiveness across desktop, tablet, and mobile.",
+        "Diagnosed and resolved layout issues, deprecated PHP warnings, and plugin compatibility problems; configured SSL for secure deployments."
+      ] 
+    },
+  ];
+
   const projects = [
     {
-      title: "Fintech Platform",
-      client: "Enterprise",
-      roles: ["React", "Node.js", "Redis"],
-      img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2000&auto=format&fit=crop",
-      desc: "Architected a highly secure, high-frequency trading dashboard. Implemented complex real-time WebSockets to ensure sub-millisecond data delivery."
+      title: "Agency Operations & Client Management Dashboard",
+      tech: "React.js · Node.js · Express.js · PostgreSQL · Prisma ORM · Tailwind CSS",
+      bullets: [
+        "Full architecture and schema design for a 38-model relational database supporting client management, SOWs, tasks, and reporting.",
+        "Built 22 modular route files exposing 100+ REST endpoints, each supporting full CRUD plus custom actions (health-score calculation, file uploads, annotations).",
+        "Designed and implemented RBAC middleware to enforce per-role permissions across all API routes."
+      ]
     },
     {
-      title: "Global E-Comm",
-      client: "Retail",
-      roles: ["MongoDB", "Express", "React"],
-      img: "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=2000&auto=format&fit=crop",
-      desc: "Engineered a headless commerce solution capable of handling 50k concurrent users during flash sales. Completely decoupled the frontend for maximum performance."
+      title: "Visa Consultancy Website — Freelance Client Project",
+      tech: "HTML5 · CSS3 · JavaScript · WordPress",
+      bullets: [
+        "Designed and deployed a responsive business website for a visa consultancy client (SIAM Thai Visa), including navigation structure and cross-device layout, delivered on time as a solo freelance engagement."
+      ]
     }
   ];
 
-  const experience = [
-    { role: "Senior Engineer", company: "TechNova", year: "2022 - Present", desc: "Leading the core architecture team. Mentoring junior developers and defining the stack for new enterprise products." },
-    { role: "Full Stack Dev", company: "WebScale Inc", year: "2019 - 2022", desc: "Built and scaled 3 flagship products from ground zero. Handled DevOps pipelines and database optimization." },
-    { role: "Frontend Dev", company: "Creative Studio", year: "2017 - 2019", desc: "Award-winning interactive websites. Focused on WebGL, Framer Motion, and GSAP animations." }
-  ];
-
-  const features = [
-    { num: "01", title: "Real-time WebSocket Grid", desc: "Engineered a custom React data grid that handles 10,000+ real-time row updates per second without dropping frames using Canvas API." },
-    { num: "02", title: "Custom Auth Service", desc: "Built an OAuth2 & JWT based microservice with Redis caching, handling secure sessions and rate-limiting for 1M+ users." },
-    { num: "03", title: "Automated CI/CD", desc: "Architected GitHub Actions pipelines with Docker & AWS ECS, cutting deployment time from 20 minutes to under 3 minutes." }
-  ];
-
-  const timeline = [
-    { step: "Discovery & Arch", desc: "Analyzing requirements, drawing C4 models, and defining API contracts before writing a single line of code." },
-    { step: "Development", desc: "Writing clean, type-safe, and self-documenting code in TypeScript, utilizing modern hooks and patterns." },
-    { step: "Testing", desc: "Ensuring stability with strict unit tests (Jest) and end-to-end user flows (Cypress/Playwright)." },
-    { step: "CI/CD & Deploy", desc: "Automating builds via GitHub Actions/Gitlab CI, containerizing with Docker, and scaling via AWS/Kubernetes." }
-  ];
-
-  const skills = [
-    "JavaScript (ES6+)", "TypeScript", "React.js", "Next.js", "Node.js", "Express.js", 
-    "MongoDB", "PostgreSQL", "Redis", "GraphQL", "REST APIs", "Tailwind CSS",
-    "Framer Motion", "GSAP", "Docker", "AWS", "CI/CD", "Jest & Cypress"
+  const coreCompetencies = [
+    "Full-Stack Web Development", "React Development", "Node.js & Express APIs", 
+    "SQL & PostgreSQL Database Design", "RBAC & Auth Workflows", "REST API Architecture", 
+    "Responsive Web Design", "Website Performance Optimization", "Version Control (Git & GitHub)", 
+    "Client Requirement Analysis", "Agile Collaboration", "Problem Solving"
   ];
 
   return (
@@ -238,187 +191,193 @@ function App() {
       <CustomCursor />
       
       <nav className="nav">
-        <div className="nav-logo interactive">Folio.</div>
+        <div className="nav-logo interactive">KTG.</div>
         <div className="nav-links">
-          <a href="#about" className="interactive">About</a>
-          <a href="#engineering" className="interactive">Engineering</a>
-          <a href="#work" className="interactive">Work</a>
+          <a href="#summary" className="interactive">Summary</a>
+          <a href="#experience" className="interactive">Experience</a>
+          <a href="#projects" className="interactive">Projects</a>
           <a href="#contact" className="interactive">Contact</a>
         </div>
       </nav>
 
-      <main>
+      <main style={{ maxWidth: '1200px', margin: '0 auto' }}>
         {/* Hero */}
-        <section className="section hero">
-          <h1 style={{ display: 'flex', flexDirection: 'column' }}>
-            <MaskText phrases={["Senior", "Full Stack", "Engineer"]} delay={0.2} />
+        <section className="section hero" style={{ paddingTop: '25vh' }}>
+          <h1>
+            <MaskText phrases={["K T GOWTHAM"]} delay={0.2} />
           </h1>
-          <div className="hero-subtitle">
-            <MaskText phrases={[
-              "Specializing in highly scalable",
-              "architectures and premium",
-              "digital experiences."
-            ]} delay={0.8} />
+          <h1 className="accent-text" style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}>
+            <MaskText phrases={["Full-Stack Developer"]} delay={0.4} />
+          </h1>
+          <div style={{ marginTop: '2rem', maxWidth: '600px' }}>
+            <MaskText className="desc-text" phrases={[
+              "React.js & Node.js",
+            ]} delay={0.6} />
             <br />
             <motion.div 
-              initial={{ opacity: 0 }} 
-              animate={{ opacity: 1 }} 
-              transition={{ delay: 1.5, duration: 1 }}
-              style={{ marginTop: '2rem' }}
+              initial={{ opacity: 0, y: 20 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ delay: 1, duration: 0.8 }}
+              style={{ marginTop: '1.5rem' }}
             >
-              <MagneticButton href="#work">View Projects</MagneticButton>
+              <MagneticButton href="#summary">View Profile</MagneticButton>
             </motion.div>
           </div>
         </section>
 
-        {/* About & Stats */}
-        <section id="about" className="section" style={{ paddingBottom: 0 }}>
-          <TerminalBlock />
-          <div className="spacer-sm"></div>
+        {/* Professional Summary */}
+        <section id="summary" className="section glass-panel" style={{ marginTop: '5vh', marginBottom: '5vh', padding: '4rem' }}>
+          <h3><MaskText phrases={["Professional Summary"]} /></h3>
+          <p className="desc-text" style={{ marginTop: '1.5rem', maxWidth: '900px' }}>
+            Full-Stack Developer with hands-on production experience across React.js, Node.js, and PostgreSQL, currently solely responsible for architecting and delivering an enterprise agency-management platform end-to-end — spanning 38 relational data models, 100+ REST API endpoints, and role-based access control for 4 distinct user types. Comfortable owning a feature independently from stakeholder requirements through database design, API implementation, and production deployment. Strong foundation in scalable schema design, REST API architecture, and building reusable frontend systems that speed up delivery across a growing codebase.
+          </p>
+        </section>
 
-          <div className="info-grid">
-            <div>
-              <h3><MaskText phrases={["About Me"]} /></h3>
-              <p style={{ marginBottom: '1.5rem', maxWidth: '500px' }}>
-                With over 7 years of deep-dive experience, I don't just write code—I engineer solutions. I bridge the gap between heavy-duty backend logic and hyper-smooth frontend interactions. 
-              </p>
-              <p style={{ maxWidth: '500px' }}>
-                My philosophy is simple: technology should be invisible. The user should only feel the speed, reliability, and beauty of the product.
-              </p>
-            </div>
-            
-            <div className="info-col-right">
-              <div className="stat-box">
-                <span className="mono">Years Exp</span>
-                <div className="stat-number">07+</div>
-              </div>
-              <div className="stat-box">
-                <span className="mono">GitHub Commits (YTD)</span>
-                <div className="stat-number">1,240+</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Experience List */}
-          <div className="spacer-sm"></div>
-          <h3><MaskText phrases={["Experience"]} /></h3>
-          <div className="exp-list">
-            {experience.map((exp, i) => (
-              <div key={i} className="exp-item interactive">
-                <div className="exp-title">{exp.role}</div>
-                <div>
-                  <span className="mono">{exp.company}</span>
-                  <p style={{ fontSize: '1rem', marginTop: '0.25rem' }}>{exp.desc}</p>
-                </div>
-                <div className="mono">{exp.year}</div>
-              </div>
+        {/* Technical Skills */}
+        <section id="skills" className="section">
+          <h3><MaskText phrases={["Technical Skills"]} /></h3>
+          <div className="skills-grid" style={{ marginTop: '2rem' }}>
+            {Object.entries(technicalSkills).map(([category, skills], i) => (
+              <motion.div 
+                key={i} 
+                className="skill-row glass-panel interactive" 
+                style={{ padding: '1.5rem 2rem' }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <div className="skill-category">{category}</div>
+                <div className="desc-text">{skills}</div>
+              </motion.div>
             ))}
           </div>
         </section>
 
-        {/* Engineering Process Section */}
-        <section id="engineering" className="section">
-          <div className="spacer"></div>
-          <h3><MaskText phrases={["Engineering Process"]} /></h3>
-          <div className="spacer-sm"></div>
-          <div className="timeline">
-            {timeline.map((item, i) => (
+        {/* Professional Experience */}
+        <section id="experience" className="section">
+          <h3><MaskText phrases={["Professional Experience"]} /></h3>
+          <div className="exp-list" style={{ marginTop: '2rem' }}>
+            {experience.map((exp, i) => (
               <motion.div 
-                key={i}
-                className={`timeline-item ${i % 2 === 0 ? 'left' : 'right'}`}
-                initial={{ opacity: 0, y: 50 }}
+                key={i} 
+                className="exp-item glass-panel interactive"
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: i * 0.2 }}
+                transition={{ delay: i * 0.2 }}
               >
-                <div className="timeline-content interactive">
-                  <h4>{item.step}</h4>
-                  <p>{item.desc}</p>
+                <div className="exp-role-wrap">
+                  <div className="exp-role">{exp.role}</div>
+                </div>
+                <div className="exp-content-wrap">
+                  <span className="exp-company">{exp.company}</span>
+                  <ul className="exp-bullets desc-text">
+                    {exp.bullets.map((bullet, idx) => (
+                      <li key={idx}>{bullet}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="exp-year-wrap">
+                  <span className="exp-year">{exp.year}</span>
                 </div>
               </motion.div>
             ))}
           </div>
         </section>
 
-        {/* Features / Micro-Gallery */}
-        <section className="section" style={{ paddingBottom: 0 }}>
-          <div className="spacer-sm"></div>
-          <h3><MaskText phrases={["Engineering Highlights"]} /></h3>
-          <p style={{ marginBottom: '3rem', maxWidth: '600px' }}>
-            Beyond standard CRUD apps, I focus on solving complex engineering problems at scale.
-          </p>
-          <div className="features-grid">
-            {features.map((feat, i) => (
+        {/* Projects */}
+        <section id="projects" className="section">
+          <h3><MaskText phrases={["Projects"]} /></h3>
+          <div className="project-container" style={{ marginTop: '2rem' }}>
+            {projects.map((project, i) => (
               <motion.div 
                 key={i} 
-                className="feature-card interactive"
+                className="glass-panel interactive"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.2 }}
+              >
+                <h2 className="project-title">{project.title}</h2>
+                <div className="project-tech">{project.tech}</div>
+                <ul className="exp-bullets desc-text" style={{ maxWidth: '900px' }}>
+                  {project.bullets.map((bullet, idx) => (
+                    <li key={idx}>{bullet}</li>
+                  ))}
+                </ul>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* Education & Certs */}
+        <section id="education" className="section">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem' }}>
+            <motion.div 
+              className="glass-panel"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <h3><MaskText phrases={["Education"]} /></h3>
+              <div style={{ marginTop: '2rem' }}>
+                <div style={{ marginBottom: '2.5rem' }}>
+                  <h4 style={{ fontSize: '1.25rem', color: '#fff', marginBottom: '0.5rem' }}>Bachelor of Engineering, Computer Science</h4>
+                  <div className="desc-text">Atria Institute of Technology, Bengaluru — CGPA: 7.4/10</div>
+                  <div className="exp-year" style={{ marginTop: '0.5rem' }}>2021 – 2025</div>
+                </div>
+                <div>
+                  <h4 style={{ fontSize: '1.25rem', color: '#fff', marginBottom: '0.5rem' }}>Pre-University (PCMC)</h4>
+                  <div className="desc-text">BGS PU College, Gauribidanur — 86%</div>
+                  <div className="exp-year" style={{ marginTop: '0.5rem' }}>2021</div>
+                </div>
+              </div>
+            </motion.div>
+            <motion.div 
+              className="glass-panel"
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <h3><MaskText phrases={["Certifications"]} /></h3>
+              <ul className="exp-bullets desc-text" style={{ marginTop: '2rem' }}>
+                <li style={{ marginBottom: '1.5rem' }}>Java Foundation Certification — Infosys Springboard</li>
+                <li>SQL and Relational Databases 101 — IBM</li>
+              </ul>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Core Competencies */}
+        <section id="competencies" className="section">
+          <h3><MaskText phrases={["Core Competencies"]} /></h3>
+          <div className="competency-container" style={{ marginTop: '2rem' }}>
+            {coreCompetencies.map((comp, i) => (
+              <motion.div 
+                key={i} 
+                className="competency-pill interactive"
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.15 }}
+                transition={{ delay: i * 0.05 }}
               >
-                <div className="feature-num">{feat.num}</div>
-                <h4>{feat.title}</h4>
-                <p>{feat.desc}</p>
+                {comp}
               </motion.div>
-            ))}
-          </div>
-        </section>
-
-        {/* Skills Section */}
-        <section id="skills" className="section" style={{ paddingBottom: 0 }}>
-          <div className="spacer"></div>
-          <h3><MaskText phrases={["Tech Stack"]} /></h3>
-          <div className="skills-container">
-            {skills.map((skill, i) => (
-              <div key={i} className="skill-pill interactive">
-                {skill}
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Work Section */}
-        <section id="work" className="section">
-          <div className="spacer"></div>
-          <h3><MaskText phrases={["Selected Works"]} /></h3>
-          <div className="spacer-sm"></div>
-          
-          <div className="project-container">
-            {projects.map((project, i) => (
-              <div key={i} className="project-item">
-                <ParallaxImage src={project.img} />
-                <div className="project-info">
-                  <h2 className="project-title">{project.title}</h2>
-                  <div className="project-tags">
-                    {project.roles.map(role => (
-                      <span key={role} className="tag">{role}</span>
-                    ))}
-                  </div>
-                  <p style={{ marginBottom: '2rem' }}>{project.desc}</p>
-                  <MagneticButton href="#">View Source</MagneticButton>
-                </div>
-              </div>
             ))}
           </div>
         </section>
 
         {/* Footer */}
-        <section id="contact" style={{ paddingBottom: 0 }} className="section">
-          <div className="spacer"></div>
-          <h2 style={{ textAlign: 'center', marginBottom: '2rem', fontSize: 'clamp(2rem, 5vw, 5rem)' }}>Let's Build It.</h2>
-          <div style={{ textAlign: 'center', marginBottom: '10vh' }}>
-            <MagneticButton href="mailto:hello@example.com">hello@example.com</MagneticButton>
+        <section id="contact" className="section" style={{ textAlign: 'center', paddingBottom: '10vh' }}>
+          <h2 style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)', marginBottom: '3rem' }}>Let's Build It.</h2>
+          <div style={{ marginBottom: '4rem' }}>
+            <MagneticButton href="mailto:ktgowtham89@gmail.com">ktgowtham89@gmail.com</MagneticButton>
           </div>
-          
-          <div className="marquee-container interactive">
-            <motion.div 
-              className="marquee-inner"
-              animate={{ x: [0, -1035] }}
-              transition={{ repeat: Infinity, ease: "linear", duration: 10 }}
-            >
-              AVAILABLE FOR HIRE — AVAILABLE FOR HIRE — AVAILABLE FOR HIRE — 
-            </motion.div>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', flexWrap: 'wrap' }}>
+            <a href="tel:9535305049" className="nav-links interactive" style={{ fontSize: '1.2rem', color: 'var(--text-muted)', textDecoration: 'none' }}>+91 9535305049</a>
+            <a href="https://linkedin.com/in/ktgowtham7" target="_blank" rel="noreferrer" className="nav-links interactive" style={{ fontSize: '1.2rem', color: 'var(--text-muted)', textDecoration: 'none' }}>LinkedIn</a>
+            <a href="https://github.com/ktgowtham7" target="_blank" rel="noreferrer" className="nav-links interactive" style={{ fontSize: '1.2rem', color: 'var(--text-muted)', textDecoration: 'none' }}>GitHub</a>
           </div>
         </section>
       </main>
